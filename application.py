@@ -10,7 +10,8 @@ CORS(app)
 usuarios = []
 funciones = []
 peliculas = []
-datos = {}
+resenas = []
+
 
 
 @app.route('/', methods=['GET'])
@@ -49,19 +50,21 @@ def obtener_usuarios():
 @app.route('/editar', methods=['POST', 'GET'])
 def editar_usuario():
     dato = request.get_json()
+    previous_usuario = dato['previous_usuario']
     nombre = dato['nombre']
     apellido = dato['apellido']
     usuario = dato['usuario']
     contrasena = dato['contrasena']
-    global datos
-
-    for i in range(len(usuarios)):
-        if usuarios[i]['usuario'] == datos[i]['usuario']:
-            usuarios[i]['nombre'] = nombre
-            usuarios[i]['apellido'] = apellido
-            usuarios[i]['usuario'] = usuario
-            usuarios[i]['contrasena'] = contrasena
+    
+    global usuarios
+    for usuario in usuarios:
+        if usuario.usuario == previous_usuario:
+            usuario.usuario = previous_usuario
+            usuario.nombre = nombre
+            usuario.apellido = apellido
+            usuario.usuario = contrasena
             break
+
     return jsonify({"mensaje": "El usuario se edito"})
 
 @app.route('/agregarFuncion', methods=['POST'])
@@ -79,6 +82,26 @@ def agregarFuncion():
     funciones.append(nueva_funcion)
     return jsonify({'mensaje': 'La funcion a sido agregada correctamente'})
 
+def actualizar_funcion(pelicula, new_pelicula):
+    """
+    Actualiza una funcion.
+    """
+    global funciones 
+    for funcion in funciones:
+        if funcion.pelicula == pelicula:
+            funcion.pelicula = new_pelicula
+            
+@app.route('/eliminarFuncion', methods=['POST'])
+def eliminar_funcion():
+    """
+    Eliminar una funcion
+    """
+    pelicula = request.args.get('pelicula')
+    global funciones 
+    for funcion in funciones:
+        if funcion.pelicula == pelicula:
+            funcion.pop()
+    
 @app.route('/obtenerFunciones', methods=['GET'])
 def obtenerFunciones():
     """
@@ -97,10 +120,10 @@ def obtenerFunciones():
 
 @app.route('/obtenerSala', methods=['GET'])
 def obtenerSala():
-    nombre = request.args.get('nombre')
+    pelicula = request.args.get('pelicula')
     global funciones
     for funcion in funciones:
-        if funcion.nombre == nombre:
+        if funcion.pelicula == pelicula:
             return jsonify(funcion.asientos())
     return jsonify({"mensaje": "No existe esta función"})
 
@@ -127,16 +150,16 @@ def editar_pelicula():
     global peliculas
     for i in range(len(peliculas)):
         if peliculas[i]['pelicula'] == pelicula:
+            actualizar_funcion(pelicula, new_pelicula)
             peliculas[i]['titulo'] = new_pelicula
             peliculas[i]['url_imagen'] = new_url_imagen
             peliculas[i]['puntuacion'] = new_puntuacion
             peliculas[i]['duracion'] = new_duracion
             peliculas[i]['sinopsis'] = new_sinopsis
             break
-    
     return jsonify({"mensaje": "Pelicula editada correctamente"})
 
-@app.route('eliminarPelicula', methods=['POST'])
+@app.route('/eliminarPelicula', methods=['POST'])
 def eliminar_pelicula():
     dato = request.get_json()
     nombre_pelicula = dato['pelicula']
@@ -160,6 +183,17 @@ def leer_archivo():
         columna = fila.split(",")
         peliculas.append({'pelicula': columna[0], 'url_imagen': columna[1], 'puntuacion': columna[2], 'duracion': columna[3], 'sinopsis': columna[4]})
     return jsonify(peliculas)
+
+"""
+@app.route('/resena', methods=['POST'])
+def resena():
+    dato = request.get_json()
+    nombre = dato['nombre']
+    comentario = dato['comentario']
+    pelicula = dato['pelicula']
+    global resenas
+    return "aun falta"
+"""
 
 
 if __name__ == "__main__":
