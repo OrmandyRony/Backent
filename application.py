@@ -209,8 +209,9 @@ def leer_archivo():
     
     for fila in filas:
         contador = contador + 1
+        ident = str(contador)
         columna = fila.split(",")
-        peliculas.append({'pelicula': columna[0], 'url_imagen': columna[1], 'puntuacion': columna[2], 'duracion': columna[3], 'sinopsis': columna[4], 'id': contador})
+        peliculas.append({'pelicula': columna[0], 'url_imagen': columna[1], 'puntuacion': columna[2], 'duracion': columna[3], 'sinopsis': columna[4], 'id': ident})
     return jsonify(peliculas)
 
 
