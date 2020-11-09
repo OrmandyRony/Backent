@@ -144,7 +144,7 @@ def apartarAsientos():
 @app.route('/editarPelicula', methods=['POST'])
 def editar_pelicula():
     dato = request.get_json()
-    pelicula = dato['pelicula']
+    identificador = dato['identificador']
     new_pelicula = dato['new_pelicula']
     new_url_imagen = dato['new_url_imagen']
     new_puntuacion = dato['new_puntuacion']
@@ -152,8 +152,8 @@ def editar_pelicula():
     new_sinopsis = dato['new_sinopsis']
     global peliculas
     for i in range(len(peliculas)):
-        if peliculas[i]['pelicula'] == pelicula:
-            actualizar_funcion(pelicula, new_pelicula)
+        if peliculas[i]['id'] == identificador:
+            actualizar_funcion(peliculas[i]['pelicula'], new_pelicula)
             peliculas[i]['pelicula'] = new_pelicula
             peliculas[i]['url_imagen'] = new_url_imagen
             peliculas[i]['puntuacion'] = new_puntuacion
@@ -168,11 +168,18 @@ def editar_funcion():
     Esto hacerlo con sala
     """
     dato = request.get_json()
-    pelicula = dato['pelicula']
+    identificador = dato['identificador']
+    pelicula = ""
     new_pelicula = dato['new_pelicula']
     new_sala = dato['new_sala']
     new_horario = dato['new_horario']
     global funciones
+    global peliculas
+    for i in range(len(peliculas)):
+        if peliculas[i]['id'] == identificador:
+           pelicula = peliculas[i]['pelicula']
+        break
+    
     for funcion in funciones:
         if funcion.pelicula == pelicula:
             funcion.pelicula = new_pelicula
@@ -212,9 +219,9 @@ def resena():
     dato = request.get_json()
     nombre = dato['nombre']
     comentario = dato['comentario']
-    pelicula = dato['pelicula']
+    identificador = dato['id']
     global resenas
-    resenas.append({'nombre': nombre, 'comentario': comentario, 'pelicula': pelicula})
+    resenas.append({'nombre': nombre, 'comentario': comentario, 'id': identificador})
     return jsonify({'mensaje': "Reseña agregada"})
 
 @app.route('/obtenerResena', methods=['GET'])
