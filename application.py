@@ -168,20 +168,13 @@ def editar_funcion():
     Esto hacerlo con sala
     """
     dato = request.get_json()
-    identificador = dato['identificador']
-    pelicula = ""
+    sala = dato['sala']
     new_pelicula = dato['new_pelicula']
     new_sala = dato['new_sala']
     new_horario = dato['new_horario']
-    global funciones
-    global peliculas
-    for i in range(len(peliculas)):
-        if peliculas[i]['id'] == identificador:
-           pelicula = peliculas[i]['pelicula']
-           break
-    
+    global funciones    
     for funcion in funciones:
-        if funcion.pelicula == pelicula:
+        if funcion.sala == sala:
             funcion.pelicula = new_pelicula
             funcion.sala =new_sala
             funcion.horario = new_horario
