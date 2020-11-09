@@ -12,6 +12,7 @@ funciones = []
 peliculas = []
 resenas = []
 registro_funcion = []
+contador = 0
 
 usuario_maestro= Usuario("Usuario", "Maestro", "admin", "admin", "Administrador" )
 usuarios.append(usuario_maestro)
@@ -197,9 +198,12 @@ def leer_archivo():
     contenido = dato['contenido']
     filas = contenido.split("\r\n")
     global peliculas
+    global contador
+    
     for fila in filas:
+        contador = contador + 1
         columna = fila.split(",")
-        peliculas.append({'pelicula': columna[0], 'url_imagen': columna[1], 'puntuacion': columna[2], 'duracion': columna[3], 'sinopsis': columna[4]})
+        peliculas.append({'pelicula': columna[0], 'url_imagen': columna[1], 'puntuacion': columna[2], 'duracion': columna[3], 'sinopsis': columna[4], 'id': contador})
     return jsonify(peliculas)
 
 
