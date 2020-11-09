@@ -11,10 +11,10 @@ usuarios = []
 funciones = []
 peliculas = []
 resenas = []
+registro_funcion = []
 
 usuario_maestro= Usuario("Usuario", "Maestro", "admin", "admin", "Administrador" )
 usuarios.append(usuario_maestro)
-
 
 @app.route('/', methods=['GET'])
 def inicio():
@@ -163,6 +163,9 @@ def editar_pelicula():
 
 @app.route('/editarFuncion', methods=['POST'])
 def editar_funcion():
+    """
+    Esto hacerlo con sala
+    """
     dato = request.get_json()
     pelicula = dato['pelicula']
     new_pelicula = dato['new_pelicula']
@@ -213,7 +216,20 @@ def resena():
 @app.route('/obtenerResena', methods=['GET'])
 def obtener_resena():
     return jsonify(resenas)
-    
+
+@app.route('/registroAsistente', methods=['POST'])
+def registro_asistentes():
+    dato = request.get_json()
+    usuario = dato['usuario']
+    pelicula = dato['pelicula']
+    global registro_funcion
+    registro_funcion.append({'usuario': usuario, 'pelicula': pelicula})
+    return jsonify({'mensaje': 'Usuario asignado a una funcion'})
+
+@app.route('/obtenerRegistro', methods=['GET'])
+def obtener_registro():
+    return jsonify(registro_funcion)
+
 if __name__ == '__main__':
     puerto = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=puerto)
