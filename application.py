@@ -12,6 +12,8 @@ funciones = []
 peliculas = []
 resenas = []
 
+usuario_maestro= Usuario("Usuario", "Maestro", "admin", "admin", "Administrador" )
+usuarios.append(usuario_maestro)
 
 
 @app.route('/', methods=['GET'])
@@ -55,7 +57,6 @@ def editar_usuario():
     apellido = dato['apellido']
     usuario = dato['usuario']
     contrasena = dato['contrasena']
-    
     global usuarios
     for usuario in usuarios:
         if usuario.usuario == previous_usuario:
@@ -94,13 +95,13 @@ def actualizar_funcion(pelicula, new_pelicula):
 @app.route('/eliminarFuncion', methods=['POST'])
 def eliminar_funcion():
     """
-    Eliminar una funcion
+    Elimina una funcion
     """
-    pelicula = request.args.get('pelicula')
-    global funciones 
-    for funcion in funciones:
-        if funcion.pelicula == pelicula:
-            funcion.pop()
+    dato = request.get_json()
+    identificador = dato['identificador']
+    global funciones
+    funciones.pop(identificador)
+    return jsonify({'mensaje': 'Funcion eliminada'})
     
 @app.route('/obtenerFunciones', methods=['GET'])
 def obtenerFunciones():
@@ -122,19 +123,20 @@ def obtenerFunciones():
 def obtenerSala():
     pelicula = request.args.get('pelicula')
     global funciones
+    print(pelicula)
     for funcion in funciones:
         if funcion.pelicula == pelicula:
             return jsonify(funcion.asientos())
     return jsonify({"mensaje": "No existe esta función"})
 
-@app.route('/apartar', methods=['POST'])
+@app.route('/apartarAsientos', methods=['POST'])
 def apartarAsientos():
     cuerpo = request.get_json()
-    nombre = cuerpo['nombre']
+    pelicula = cuerpo['pelicula']
     identificador = cuerpo['identificador']
     global funciones
     for funcion in funciones:
-        if funcion.nombre == nombre:
+        if funcion.pelicula == pelicula:
             funcion.apartar(identificador)
     return jsonify({"mensaje": "apartado correctamente"})
 
@@ -151,7 +153,7 @@ def editar_pelicula():
     for i in range(len(peliculas)):
         if peliculas[i]['pelicula'] == pelicula:
             actualizar_funcion(pelicula, new_pelicula)
-            peliculas[i]['titulo'] = new_pelicula
+            peliculas[i]['pelicula'] = new_pelicula
             peliculas[i]['url_imagen'] = new_url_imagen
             peliculas[i]['puntuacion'] = new_puntuacion
             peliculas[i]['duracion'] = new_duracion
@@ -159,14 +161,27 @@ def editar_pelicula():
             break
     return jsonify({"mensaje": "Pelicula editada correctamente"})
 
+@app.route('/editarFuncion', methods=['POST'])
+def editar_funcion():
+    dato = request.get_json()
+    pelicula = dato['pelicula']
+    new_pelicula = dato['new_pelicula']
+    new_sala = dato['new_sala']
+    new_horario = dato['new_horario']
+    global funciones
+    for funcion in funciones:
+        if funcion.pelicula == pelicula:
+            funcion.pelicula = new_pelicula
+            funcion.sala =new_sala
+            funcion.horario = new_horario
+    return jsonify({'mensaje': 'Funcion editada con exito'})
+
 @app.route('/eliminarPelicula', methods=['POST'])
 def eliminar_pelicula():
     dato = request.get_json()
-    nombre_pelicula = dato['pelicula']
+    identificador = dato['identificador']
     global peliculas
-    for pelicula in peliculas:
-        if pelicula.pelicula == nombre_pelicula:
-            pelicula.pop
+    peliculas.pop(identificador)
     return jsonify({'mensaje': "La pelicula a sido eliminada"})
 
 @app.route('/obtenerPeliculas', methods=['GET'])
@@ -184,17 +199,21 @@ def leer_archivo():
         peliculas.append({'pelicula': columna[0], 'url_imagen': columna[1], 'puntuacion': columna[2], 'duracion': columna[3], 'sinopsis': columna[4]})
     return jsonify(peliculas)
 
-"""
-@app.route('/resena', methods=['POST'])
+
+@app.route('/ingresarResena', methods=['POST'])
 def resena():
     dato = request.get_json()
     nombre = dato['nombre']
     comentario = dato['comentario']
     pelicula = dato['pelicula']
     global resenas
-    return "aun falta"
-"""
+    resenas.append({'nombre': nombre, 'comentario': comentario, 'pelicula': pelicula})
+    return jsonify({'mensaje': "Reseña agregada"})
 
-
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+@app.route('/obtenerResena', methods=['GET'])
+def obtener_resena():
+    return jsonify(resenas)
+    
+if __name__ == '__main__':
+    puerto = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=puerto)

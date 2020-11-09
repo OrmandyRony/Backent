@@ -10,9 +10,9 @@ class Funcion():
     
     def sala_vacia(self):
         sala = []
-        for i in range(12):
+        for i in range(9):
             sala.append({"identificador": i+1, "disponible": True})
-            return sala
+        return sala
     
     def asientos(self):
         return self.asistentes
