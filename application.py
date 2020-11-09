@@ -178,7 +178,7 @@ def editar_funcion():
     for i in range(len(peliculas)):
         if peliculas[i]['id'] == identificador:
            pelicula = peliculas[i]['pelicula']
-        break
+           break
     
     for funcion in funciones:
         if funcion.pelicula == pelicula:
