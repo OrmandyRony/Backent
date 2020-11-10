@@ -124,9 +124,8 @@ def obtenerFunciones():
 def obtenerSala():
     pelicula = request.args.get('pelicula')
     global funciones
-    print(pelicula)
     for funcion in funciones:
-        if funcion.pelicula == pelicula:
+        if funcion.sala == sala:
             return jsonify(funcion.asientos())
     return jsonify({"mensaje": "No existe esta función"})
 
