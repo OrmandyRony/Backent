@@ -133,11 +133,11 @@ def obtenerSala():
 @app.route('/apartarAsientos', methods=['POST'])
 def apartarAsientos():
     cuerpo = request.get_json()
-    pelicula = cuerpo['pelicula']
+    sala = cuerpo['sala']
     identificador = cuerpo['identificador']
     global funciones
     for funcion in funciones:
-        if funcion.pelicula == pelicula:
+        if funcion.sala == sala:
             funcion.apartar(identificador)
     return jsonify({"mensaje": "apartado correctamente"})
 
