@@ -122,7 +122,7 @@ def obtenerFunciones():
 
 @app.route('/obtenerSala', methods=['GET'])
 def obtenerSala():
-    pelicula = request.args.get('pelicula')
+    sala = request.args.get('pelicula')
     global funciones
     for funcion in funciones:
         if funcion.sala == sala:
